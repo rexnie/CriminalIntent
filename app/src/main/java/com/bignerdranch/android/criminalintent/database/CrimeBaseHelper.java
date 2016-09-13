@@ -3,6 +3,7 @@ package com.bignerdranch.android.criminalintent.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable;
 
@@ -10,6 +11,7 @@ import com.bignerdranch.android.criminalintent.database.CrimeDbSchema.CrimeTable
  * Created by niedaocai on 16-7-15.
  */
 public class CrimeBaseHelper extends SQLiteOpenHelper {
+    private static final String TAG = "CrimeBaseHelper";
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "crimebase.db";
 
@@ -27,6 +29,7 @@ public class CrimeBaseHelper extends SQLiteOpenHelper {
                 + CrimeTable.Cols.SOLVED + ","
                 + CrimeTable.Cols.SUSPECT + ")"
         );
+        Log.d(TAG, "onCreate");
     }
 
 
