@@ -65,13 +65,6 @@ public class CrimeFragment extends Fragment {
         return fragment;
     }
 
-    public static UUID getUuidFromIntent(Intent intent) {
-        UUID uuid = null;
-        Bundle bundle = intent.getExtras();
-        uuid = (UUID) bundle.getSerializable(ARG_CRIME_ID);
-        return uuid;
-    }
-
     public void onAttach(Context context) {
         //Called when a fragment is first attached to its context
         //onAttach  ->  onCreate  ->  onCreateView
