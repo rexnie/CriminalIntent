@@ -52,7 +52,6 @@ public class CrimeFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
-    //private Button mSaveButton;
     private Button mReportButton;
     private Button mSuspectButton;
     private ImageButton mPhotoButton;
@@ -136,15 +135,6 @@ public class CrimeFragment extends Fragment {
                 mCrime.setSolved(isChecked);
             }
         });
-
-        /*mSaveButton = (Button) v.findViewById(R.id.crime_save);
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                returnResult();
-            }
-        });
-        */
 
         mReportButton = (Button) v.findViewById(R.id.crime_report);
         mReportButton.setOnClickListener(new View.OnClickListener() {
@@ -241,6 +231,9 @@ public class CrimeFragment extends Fragment {
     private void removeCrime() {
         if (mCrime != null) {
             CrimeLab.get(getActivity()).removeCrime(mCrime);
+
+            getActivity().setResult(Activity.RESULT_OK, new Intent()
+                    .putExtra(CrimeListFragment.EXTRA_DATA_STRUCTURAL_CHANGE, true));
         }
     }
 
@@ -377,15 +370,5 @@ public class CrimeFragment extends Fragment {
         // This is called after onDestroy().
         super.onDetach();
         //Log.d(TAG,"onDetach called");
-    }
-
-    private void returnResult() {
-        Log.d(TAG, "returnResult called");
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(ARG_CRIME_ID, mCrime.getID());
-        Intent intent = new Intent();
-        intent.putExtras(bundle);
-        getActivity().setResult(Activity.RESULT_OK, intent);
-        getActivity().finish();
     }
 }

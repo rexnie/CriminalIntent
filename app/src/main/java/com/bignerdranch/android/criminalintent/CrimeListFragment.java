@@ -18,23 +18,21 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by niedaocai on 16-6-14.
  */
 public class CrimeListFragment extends Fragment {
+    public static final int RC_CRIME_DETAIL = 1;
     private static final String TAG = "CrimeListFragment";
-    private static final int REQUEST_CRIME = 1;
-
     private static final String SUBTITLE_VISIBLE_KEY = "subtitle_visible";
-
-    private static final boolean IS_USE_SAVE_BUTTON = false;
+    public static String EXTRA_DATA_STRUCTURAL_CHANGE = "recycler_view_structural_changed";
 
     private RecyclerView mCrimeRecyclerView;
     private CrimeAdapter mAdapter;
     private int mPositionClicked = -1;
     private boolean mSubtitleVisible;
+    private boolean mDataStructuralChanged = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,12 +126,12 @@ public class CrimeListFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult called,requestCode=" + requestCode
-                + ",resultCode=" + resultCode);
-        if ((requestCode == REQUEST_CRIME) && (resultCode == Activity.RESULT_OK)) {
-            UUID uuid = CrimeFragment.getUuidFromIntent(data);
-            if (uuid != null) {
-                //mPositionClicked = CrimeLab.get(getActivity()).getCrimeIndex(uuid);
+        Log.d(TAG, "onActivityResult,requestCode=" + requestCode + ",resultCode="
+                + resultCode);
+        if (requestCode == RC_CRIME_DETAIL && resultCode == Activity.RESULT_OK) {
+            if (data != null) {
+                mDataStructuralChanged = data.getBooleanExtra(EXTRA_DATA_STRUCTURAL_CHANGE, false);
+                Log.d(TAG, "mDataStructuralChanged=" + mDataStructuralChanged);
             }
         }
     }
@@ -146,17 +144,15 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecyclerView.setAdapter(mAdapter);
         } else {
-            //mAdapter.notifyDataSetChanged();
-            if (IS_USE_SAVE_BUTTON) {
-                //mPositionClicked is updated by onActivityResult()
-                mAdapter.notifyItemChanged(mPositionClicked);
-            } else {
-                //mPositionClicked is updated by onClick()
-                //mAdapter.notifyItemChanged(mPositionClicked);
-                mAdapter.setCrimes(crimes);
-                mAdapter.notifyDataSetChanged();
-            }
             updateSubtitle();
+            mAdapter.setCrimes(crimes);
+
+            if (mDataStructuralChanged) {
+                mAdapter.notifyDataSetChanged();
+            } else {
+                mAdapter.notifyItemChanged(mPositionClicked);
+                mPositionClicked = -1;
+            }
         }
     }
 
@@ -186,20 +182,11 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            if (IS_USE_SAVE_BUTTON) {
-                //clear it for test
-                mPositionClicked = -1;
-            } else {
-                mPositionClicked = mPosition;
-            }
-            //start CrimeActivity(use RecyclerView)
-            //Intent intent = CrimeActivity.newIntent(getActivity(),mCrime.getID());
+            mPositionClicked = mPosition;
 
-            //start CrimePagerActivity(use ViewPager)
             Intent intent = CrimePagerActivity.newIntent(getActivity(), mCrime.getID());
-            startActivityForResult(intent, REQUEST_CRIME);
+            startActivityForResult(intent, RC_CRIME_DETAIL);
         }
-
     }
 
     public class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder> {
