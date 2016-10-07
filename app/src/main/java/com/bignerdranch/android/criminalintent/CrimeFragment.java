@@ -42,15 +42,18 @@ public class CrimeFragment extends Fragment {
     private static final String TAG = "CrimeFragment";
     private static final String ARG_CRIME_ID = "crime_id";
     private static final String DIALOG_DATE = "DialogDate";
+    private static final String DIALOG_TIME = "DialogTIME";
     private static final String DIALOG_FILE = "DialogFile";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
     private static final int REQUEST_PHOTO = 2;
+    private static final int REQUEST_TIME = 3;
 
     private Crime mCrime;
     private File mPhotoFile;
     private EditText mTitleField;
     private Button mDateButton;
+    private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
     private Button mReportButton;
     private Button mSuspectButton;
@@ -107,12 +110,10 @@ public class CrimeFragment extends Fragment {
         });
 
         mDateButton = (Button) v.findViewById(R.id.crime_date);
-        updateDate();
         //mDateButton.setEnabled(false);
 
         mDateButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                //mDateButton.setText(mCrime.getDate().toString());
                 FragmentManager manager = getFragmentManager();
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
@@ -120,6 +121,17 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        mTimeButton = (Button) v.findViewById(R.id.crime_time);
+        mTimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentManager manager = getFragmentManager();
+                TimePickerFragment fragment = TimePickerFragment.newInstance(mCrime.getDate());
+                fragment.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
+                fragment.show(manager, DIALOG_TIME);
+            }
+        });
+        updateDateTime();
         mSolvedCheckBox = (CheckBox) v.findViewById(R.id.crime_solved);
         mSolvedCheckBox.setChecked(mCrime.isSolved());
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -245,7 +257,11 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrime.setDate(date);
-            updateDate();
+            updateDateTime();
+        } else if (requestCode == REQUEST_TIME) {
+            Date date = (Date) data.getSerializableExtra(TimePickerFragment.EXTRA_TIME);
+            mCrime.setDate(date);
+            updateDateTime();
         } else if (requestCode == REQUEST_CONTACT && data != null) {
             Uri contactUri = data.getData();
             String[] queryFields = new String[]{
@@ -271,8 +287,10 @@ public class CrimeFragment extends Fragment {
         }
     }
 
-    private void updateDate() {
-        mDateButton.setText(mCrime.getDate().toString());
+    private void updateDateTime() {
+        Date date = mCrime.getDate();
+        mDateButton.setText(DateFormat.format("EEE, MMM dd yyyy, zzz", date));
+        mTimeButton.setText(DateFormat.format("hh:mm:ss aa", date));
     }
 
     private String getCrimeReport() {
