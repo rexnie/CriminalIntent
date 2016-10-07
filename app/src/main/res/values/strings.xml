@@ -27,6 +27,7 @@
     <string name="crime_report_subject">CriminalIntent Crime Report</string>
     <string name="send_report">Send crime via</string>
     <string name="crime_picture">Crime Picture Preview</string>
+    <string name="empty_crime_list_text">No crime, click button to create!</string>
 
     <!--string name="subtitle_format">%1$s crimes</string -->
 </resources>

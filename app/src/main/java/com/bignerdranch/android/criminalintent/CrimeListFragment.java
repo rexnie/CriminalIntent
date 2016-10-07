@@ -14,7 +14,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -33,6 +35,8 @@ public class CrimeListFragment extends Fragment {
     private int mPositionClicked = -1;
     private boolean mSubtitleVisible;
     private boolean mDataStructuralChanged = false;
+    private Button mNewCrimeButton;
+    private LinearLayout mEmptyLayout;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +55,17 @@ public class CrimeListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         mCrimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mEmptyLayout = (LinearLayout) view.findViewById(R.id.empty_crime_list);
+
+        mNewCrimeButton = (Button) view.findViewById(R.id.empty_crime_list_new);
+        mNewCrimeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                newCrime();
+            }
+        });
+
         updateUI();
         return view;
     }
@@ -153,6 +168,12 @@ public class CrimeListFragment extends Fragment {
                 mAdapter.notifyItemChanged(mPositionClicked);
                 mPositionClicked = -1;
             }
+        }
+
+        if (crimes.size() == 0) {
+            mEmptyLayout.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyLayout.setVisibility(View.GONE);
         }
     }
 
